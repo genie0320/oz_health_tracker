@@ -60,7 +60,8 @@ export function useChatStream() {
           });
         }
       }
-    } catch {
+    } catch (error) {
+      console.error("채팅 메시지 전송 실패:", error);
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: "메시지 전송에 실패했습니다. 잠시 후 다시 시도해주세요." },

@@ -6,7 +6,15 @@
 let accessToken: string | null = null;
 
 export function setAccessToken(token: string | null) {
-  accessToken = token;
+  // 콘솔에 수동으로 붙여넣을 때 줄바꿈/공백이 섞여 들어가는 실수를 방어한다.
+  accessToken = token ? token.replace(/\s+/g, "") : token;
+}
+
+// 로그인 기능이 아직 없어 콘솔에서 수동으로 토큰을 넣어 테스트하는 용도.
+// 프로덕션 빌드에는 포함되지 않는다 (import.meta.env.DEV).
+if (import.meta.env.DEV) {
+  (window as unknown as { __setToken: typeof setAccessToken }).__setToken = setAccessToken;
+  (window as unknown as { __getToken: () => string | null }).__getToken = () => accessToken;
 }
 
 /** JSON이 아닌 응답(스트리밍 등)이 필요할 때 쓰는 저수준 fetch — chatApi.ts 참고. */

@@ -25,6 +25,7 @@ frontend/dist/
 .idea/
 .vscode/
 .DS_Store
+.omc/
 
 # 기타
 *.log
