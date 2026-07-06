@@ -1,0 +1,94 @@
+# 로컬 개발용. envs/example.local.env를 envs/.local.env로 복사한 뒤,
+# 루트에 `ln -s envs/.local.env .env` 심볼릭 링크를 만들어야 아래 env_file: .env가 동작합니다
+# (CODING_RULES.md 2-2 참고).
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: remedi-mysql
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      TZ: "Asia/Seoul"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - remedi_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:alpine
+    container_name: remedi-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  chroma:
+    # ChromaDB Server Mode — decision_log.md "Vector DB: ChromaDB Server Mode 채택 이유" 참고
+    image: chromadb/chroma:latest
+    container_name: remedi-chroma
+    ports:
+      - "8001:8000"
+    volumes:
+      - remedi_chroma_data:/chroma/chroma
+
+  backend:
+    container_name: remedi-backend
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    env_file: .env
+    command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./app:/code/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  ai-worker-sync:
+    # T-LLM-2 실시간 RAG 검색 등 동기 응답 전용 (decision_log.md AI/RAG 워커 분리 원칙 참고)
+    container_name: remedi-ai-worker-sync
+    build:
+      context: .
+      dockerfile: ai_worker/Dockerfile
+    env_file: .env
+    command: uv run uvicorn ai_worker.sync_api:app --host 0.0.0.0 --port 8100
+    ports:
+      - "8100:8100"
+    depends_on:
+      - redis
+      - chroma
+
+  ai-worker-queue:
+    # T-MED-1/T-DOC-1 인식, T-LLM-3 콘텐츠 생성 등 비동기 큐 처리 전용
+    container_name: remedi-ai-worker-queue
+    build:
+      context: .
+      dockerfile: ai_worker/Dockerfile
+    env_file: .env
+    command: uv run python -m ai_worker.queue_worker
+    depends_on:
+      - redis
+      - chroma
+
+volumes:
+  remedi_mysql_data:
+  remedi_chroma_data:
