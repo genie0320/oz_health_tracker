@@ -28,3 +28,4 @@ frontend/dist/
 
 # 기타
 *.log
+.chainlit/
