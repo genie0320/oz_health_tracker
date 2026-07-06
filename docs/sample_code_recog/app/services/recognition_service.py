@@ -7,8 +7,8 @@ Service 레이어 규칙 (nickname_service.py와 동일):
 아래 generate_guide_cards() 안의 TODO 주석이 'RAG 완성 후 정확히 무엇을 바꿔야 하는지'를 보여준다.
 """
 
-from app.repositories.interaction_rule_repository import InteractionRuleRepository
 from app.dtos.recognition import GuideCard, Severity
+from app.repositories.interaction_rule_repository import InteractionRuleRepository
 
 
 class RecognitionService:

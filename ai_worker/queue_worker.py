@@ -2,6 +2,7 @@
 job 등록 후 폴링해도 되는 작업 전용 — Redis Streams 컨슈머.
 T-MED-1/T-DOC-1(인식), T-LLM-3(콘텐츠 생성) 등.
 """
+
 import asyncio
 
 from redis.asyncio import Redis

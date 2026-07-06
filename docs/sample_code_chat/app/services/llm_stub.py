@@ -12,5 +12,4 @@ from collections.abc import Iterator
 
 def stream_llm_reply(message: str, context: dict, chunks: list[str]) -> Iterator[str]:
     reply = f"'{message}'에 대한 임시 응답입니다 (LLM 연동 전 stub, 참고 문서 {len(chunks)}건)."
-    for token in reply:
-        yield token
+    yield from reply

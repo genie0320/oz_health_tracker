@@ -2,6 +2,7 @@
 챗봇(T-LLM-2)처럼 즉시 응답이 필요한 요청 전용 — 작은 FastAPI 앱.
 메인 백엔드(app/services/chat_service.py)가 이 서비스에 직접 요청한다.
 """
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 

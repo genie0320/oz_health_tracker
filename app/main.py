@@ -3,15 +3,15 @@ FastAPI 진입점. 레이어 우선 구조(apis/services/repositories/models/dto
 템플릿(AI_HealthCare_Final_Project_Template)의 폴더 배치를 따른다.
 (2026-07 재결정: 도메인 우선 -> 레이어 우선. 이유는 decision_log.md 참고)
 """
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.apis.v1 import auth_routers, chat_routers, medication_routers
 from app.core.config import settings
-from app.core.database import engine, Base
-
-from app.apis.v1 import auth_routers, medication_routers, chat_routers
+from app.core.database import Base, engine
 
 
 @asynccontextmanager

@@ -1,19 +1,21 @@
-import io
-
 BASE = "/sessions/busy-laughing-noether/mnt/remedi_mweb_co/docs/"
 
+
 def load(name):
-    with io.open(BASE + name, encoding="utf-8") as f:
+    with open(BASE + name, encoding="utf-8") as f:
         return f.read()
 
+
 def save(name, text):
-    with io.open(BASE + name, "w", encoding="utf-8") as f:
+    with open(BASE + name, "w", encoding="utf-8") as f:
         f.write(text)
+
 
 def do_replace(text, old, new, label):
     n = text.count(old)
     assert n == 1, f"{label}: match count {n}"
     return text.replace(old, new)
+
 
 # ---------------- PRD_ReMedi.md ----------------
 name = "PRD_ReMedi.md"
@@ -21,7 +23,7 @@ text = load(name)
 text = do_replace(
     text,
     "| 관련 TRD | `TRD_ReMedi.md` |\n| 원본 요구사항정의서 | `ReMedi_prd.md` (중복해소·재분류 완료본 158개 항목) |\n\n> 이 문서는 요구사항정의서의 158개 항목을 사용자 관점의 기능 단위(F-그룹)로 재구성한 것입니다.\n> 각 F-그룹은 대응하는 TRD 항목(T-그룹) 및 원본 REQ ID를 함께 표기해 상호 참조가 가능합니다.\n> ⚠ 표시된 그룹은 **Backlog**(이번 릴리스 범위 제외)입니다.",
-    "| 관련 TRD | `TRD_ReMedi.md` |\n| 원본 요구사항정의서 | `ReMedi_prd.md` (중복해소·재분류 완료본 158개 항목) |\n| 문서 버전 | v1.0 (2026-07-06) |\n\n> 이 문서는 요구사항정의서의 158개 항목을 사용자 관점의 기능 단위(F-그룹)로 재구성한 것입니다.\n> 각 F-그룹은 대응하는 TRD 항목(T-그룹) 및 원본 REQ ID를 함께 표기해 상호 참조가 가능합니다.\n> ⚠ 표시된 그룹은 **Backlog**(이번 릴리스 범위 제외)입니다.\n>\n> **변경 이력**\n> - v1.0 (2026-07-06): F-AUTH-5/6 분리(가족연결/가족구성원관리), F-CARD-1(응급공유카드) 신설, \"추적\" 탭 설명 추가, IA 개편 메모 정리",
+    '| 관련 TRD | `TRD_ReMedi.md` |\n| 원본 요구사항정의서 | `ReMedi_prd.md` (중복해소·재분류 완료본 158개 항목) |\n| 문서 버전 | v1.0 (2026-07-06) |\n\n> 이 문서는 요구사항정의서의 158개 항목을 사용자 관점의 기능 단위(F-그룹)로 재구성한 것입니다.\n> 각 F-그룹은 대응하는 TRD 항목(T-그룹) 및 원본 REQ ID를 함께 표기해 상호 참조가 가능합니다.\n> ⚠ 표시된 그룹은 **Backlog**(이번 릴리스 범위 제외)입니다.\n>\n> **변경 이력**\n> - v1.0 (2026-07-06): F-AUTH-5/6 분리(가족연결/가족구성원관리), F-CARD-1(응급공유카드) 신설, "추적" 탭 설명 추가, IA 개편 메모 정리',
     "PRD header",
 )
 save(name, text)

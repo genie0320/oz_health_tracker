@@ -15,6 +15,7 @@ class GuideCard(BaseModel):
     Tier 2 stub이든 RAG 완성 후든, 이 응답 형태는 절대 바뀌지 않는다.
     (바뀌면 프론트가 다시 작업해야 하므로 — 이게 스키마를 먼저 고정하는 이유)
     """
+
     title: str
     content: str
     severity: Severity

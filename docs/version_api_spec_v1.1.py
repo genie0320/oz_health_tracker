@@ -1,7 +1,5 @@
-import io
-
 path = "/sessions/busy-laughing-noether/mnt/remedi_mweb_co/docs/api_spec_core_v1.yaml"
-with io.open(path, encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 old = """openapi: 3.0.3
@@ -32,7 +30,7 @@ info:
 assert text.count(old) == 1, f"match count: {text.count(old)}"
 text = text.replace(old, new)
 
-with io.open(path, "w", encoding="utf-8") as f:
+with open(path, "w", encoding="utf-8") as f:
     f.write(text)
 
 print("api_spec versioned.")

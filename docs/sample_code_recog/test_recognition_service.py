@@ -3,6 +3,7 @@
 """
 
 from app.dtos.recognition import Severity
+
 from app.services.recognition_service import RecognitionService
 
 

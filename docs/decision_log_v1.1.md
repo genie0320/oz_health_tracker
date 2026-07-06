@@ -1,11 +1,12 @@
 # ReMedi 아키텍처 결정 로그 (2026-07 확정본)
 
-> **문서 버전**: v1.3 · **최종 수정**: 2026-07-06
+> **문서 버전**: v1.4 · **최종 수정**: 2026-07-06
 > **변경 이력**
 > - v1.0 (2026-07-06): 5탭 IA 반영, T-AUTH-5/6 Phase 배치 정리, RAG 아키텍처(Chroma Server Mode·청킹·Collection·대화이력) 섹션 신설, 미결사항 신설
 > - v1.1 (2026-07-06): JWT 인증 전환, MySQL 비동기 요건, 백엔드 도메인 우선 구조 전환, AI/RAG 워커 분리 원칙, CI/CD·환경변수 관리 항목 추가, 팀 합의 없는 개인 작업 코드 관련 경고 추가
 > - v1.2 (2026-07-06): 백엔드 구조를 도메인 우선 → **레이어 우선**(`app/apis`,`services`,`repositories`,`models`,`dtos`)으로 재결정. 멘토 조언(도메인 우선)과 다른 방향이라 사유를 명시적으로 남김
 > - v1.3 (2026-07-06): 도메인 우선 시절의 `backend/`, `frontend/` 개인 작업물이 이미 삭제·교체되어 아래 경고문과 미결사항 항목이 stale해짐 — 해당 내용 제거/갱신 (`README.md`도 동일 정리)
+> - v1.4 (2026-07-06): T-LLM-2 실제 구현 — LLM 연동을 LangChain+Claude 계획에서 **OpenAI 저비용 모델 직접 연동**으로 변경(비용 이유). `app/`에 chat 기능 실제 구현 완료, `chainlit_prototype/` 임시 검증 도구 추가
 
 ## 확정된 기술 결정
 
@@ -15,7 +16,7 @@
 | 프론트엔드 | React + Vite (SPA) | |
 | 백엔드 구조 | 단일 FastAPI 앱, **레이어 우선 폴더 구조**(`app/apis`, `app/services`, `app/repositories`, `app/models`, `app/dtos`) | 2026-07 팀 재논의 후 확정. 멘토님은 도메인 우선을 조언하셨으나, 팀은 ① 도메인이 많아지면(15개 안팎 예상) 폴더가 잘게 쪼개져 팀원마다 코드 스타일이 제각각으로 갈릴 위험이 크고, ② 레이어 우선은 같은 폴더(`services/` 등)에 여러 도메인 파일이 나란히 있어 새 코드를 짤 때 옆 파일 패턴을 그대로 따라 하기 쉽다는 점(사람 개발자뿐 아니라 Claude 같은 AI 에이전트가 코드를 대신 작성할 때도 동일하게 적용)을 이유로 **레이어 우선을 유지**하기로 결정. 멘토 조언과 다른 방향으로 간 의도적 결정임을 명시. AI/RAG/멀티모달 추론은 이 앱에 포함하지 않고 별도 서비스로 분리 — 아래 "AI/RAG 워커 분리 원칙" 참고. 폴더 규칙 상세는 `CODING_RULES.md` |
 | 챗봇 응답 | `StreamingResponse` + `fetch` 청크 스트리밍 | WebSocket/정식 SSE 스펙 아님 — 최소 구현으로 실시간 타이핑 효과 확보 |
-| LLM 연동 | LangChain으로 프로바이더 추상화. 개발: 저비용 모델 / 배포: Claude | `.env` 스위치만으로 교체 |
+| LLM 연동 | **OpenAI 저비용 모델(`gpt-4o-mini` 등) 직접 연동** (`openai` SDK) | 2026-07 변경 — 당초 계획(LangChain 추상화, 배포 시 Claude)에서 비용 이유로 전환. 모델 교체는 `.env`의 `OPENAI_MODEL` 하나만 바꾸면 됨(`app/services/llm_client.py`). LangChain 같은 프로바이더 추상화 레이어는 지금 필요하지 않다고 판단해 추가하지 않음 — 프로바이더를 또 바꾸게 되면 그때 재검토 |
 | 인증 토큰 | **JWT** (Access/Refresh, `Authorization: Bearer` 헤더) | 팀 정책으로 확정(2026-07, httpOnly 쿠키에서 변경). PWA를 iOS Safari에서 홈 화면에 추가해 쓰면 ITP(추적방지)가 일정 기간 미사용 시 쿠키를 삭제하는 문제가 있어, 장기 로그인 유지가 중요한 이 서비스엔 JWT가 더 안전. 대신 프론트에서 XSS 방어(입력값 이스케이프, CSP)를 더 신경써야 함 |
 | RDB | **MySQL**, **비동기 필수** (PostgreSQL 아님, 멘토 조언 반영) | SQLAlchemy Async Engine + `asyncmy`(또는 `aiomysql`) 드라이버. 고객 요구사항상 비동기 처리가 전제 조건 (2026-07 확인) |
 | Vector DB | ChromaDB (Server Mode) | |

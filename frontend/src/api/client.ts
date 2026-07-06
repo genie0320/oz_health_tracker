@@ -9,7 +9,8 @@ export function setAccessToken(token: string | null) {
   accessToken = token;
 }
 
-export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+/** JSON이 아닌 응답(스트리밍 등)이 필요할 때 쓰는 저수준 fetch — chatApi.ts 참고. */
+export async function apiFetchRaw(path: string, options: RequestInit = {}): Promise<Response> {
   const res = await fetch(`/api/v1${path}`, {
     ...options,
     headers: {
@@ -22,5 +23,10 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
     const body = await res.json().catch(() => ({}));
     throw new Error(body.message ?? `API 오류 (${res.status})`);
   }
+  return res;
+}
+
+export async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const res = await apiFetchRaw(path, options);
   return res.json() as Promise<T>;
 }

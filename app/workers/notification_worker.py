@@ -2,6 +2,7 @@
 Redis Streams 컨슈머 — 알림 발송 등 AI/RAG가 아닌 백그라운드 작업.
 (AI/RAG/멀티모달 관련 워커는 여기가 아니라 scaffold/ai_worker/에 있다 — decision_log.md 참고)
 """
+
 import asyncio
 
 from app.core.database import get_redis

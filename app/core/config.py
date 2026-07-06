@@ -1,6 +1,7 @@
 """
 pydantic-settings 기반 설정 (CODING_RULES.md 2-3, 폴더 구조와 무관하게 유지).
 """
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -28,15 +29,16 @@ class Settings(BaseSettings):
 
     MFDS_API_KEY: str = ""
 
+    # LLM (T-LLM-2). 2026-07: 비용 이유로 Claude 대신 OpenAI 저비용 모델 사용 (decision_log.md 참고).
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4o-mini"
+
     CORS_ORIGINS: list[str] = ["http://localhost:5173"]
 
     @property
     def sqlalchemy_database_url(self) -> str:
         # SQLAlchemy 유지 (2026-07 재확인) + asyncmy 비동기 드라이버
-        return (
-            f"mysql+asyncmy://{self.DB_USER}:{self.DB_PASSWORD}"
-            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-        )
+        return f"mysql+asyncmy://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
 
 settings = Settings()

@@ -6,3 +6,14 @@ export interface AuthTokenResult {
   refresh_token: string;
   token_type: string;
 }
+
+export interface ChatSessionCreateResult {
+  session_id: string;
+}
+
+// ChatMessageChunk 스키마 (api_spec_core_v1.yaml). text/plain 스트림의 각 줄이 이 형태의 JSON이다.
+export interface ChatMessageChunk {
+  type: "token" | "emergency_fallback" | "done";
+  content: string;
+  disclaimer?: string;
+}

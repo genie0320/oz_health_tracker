@@ -16,6 +16,7 @@ LLM 기반 복약·건강관리 PWA. 자세한 요구사항/결정 배경은 `do
 | `docker-compose.yml` | MySQL, Redis, ChromaDB(Server Mode), `app/`, `ai_worker/`(sync/queue 2개 서비스) | `decision_log.md` 확정 기술 결정 표 |
 | `pyproject.toml` | uv 기반, `app`/`ai`/`dev` 의존성 그룹 분리 | — |
 | `.github/workflows/ci.yml` | 백엔드(ruff+pytest, MySQL 서비스 컨테이너) + 프론트(lint+format+build) 두 job | `decision_log.md` CI/CD 항목 |
+| `chainlit_prototype/` | T-LLM-2 로직을 화면 없이 빠르게 눈으로 확인하는 임시 도구 — **제품 아님**, 지워도 무방 | `chainlit_prototype/README.md` |
 
 ## 왜 레이어 우선으로 갔나 (도메인 우선에서 재결정)
 
