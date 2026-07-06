@@ -16,7 +16,7 @@ async def consume_recognition_jobs():
     while True:
         results = await redis.xread({"recognition:jobs": last_id}, block=5000, count=10)
         for _stream, messages in results:
-            for message_id, data in messages:
+            for message_id, _data in messages:
                 # TODO: ai_worker/tasks/recognition_task.py 호출
                 last_id = message_id
         await asyncio.sleep(0.1)

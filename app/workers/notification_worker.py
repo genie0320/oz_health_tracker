@@ -14,7 +14,7 @@ async def consume_push_notifications():
     while True:
         results = await redis.xread({"notifications:push": last_id}, block=5000, count=10)
         for _stream, messages in results:
-            for message_id, data in messages:
+            for message_id, _data in messages:
                 last_id = message_id
         await asyncio.sleep(0.1)
 
