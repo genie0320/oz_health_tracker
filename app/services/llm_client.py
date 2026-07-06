@@ -9,7 +9,7 @@ from openai import AsyncOpenAI
 
 from app.core.config import settings
 
-_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+_client: AsyncOpenAI | None = None
 
 _SYSTEM_PROMPT = (
     "당신은 복약/건강관리 앱 ReMedi의 상담 도우미입니다. "
@@ -17,9 +17,17 @@ _SYSTEM_PROMPT = (
 )
 
 
+def _get_client() -> AsyncOpenAI:
+    # 지연 생성: import 시점에 API 키가 없어도(테스트/CI) 이 모듈을 문제없이 import할 수 있어야 한다.
+    global _client
+    if _client is None:
+        _client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+    return _client
+
+
 async def stream_reply(message: str, context: dict, chunks: list[str]) -> AsyncIterator[str]:
     context_text = "\n".join(chunks) if chunks else "관련 참고 문서가 아직 없습니다."
-    stream = await _client.chat.completions.create(
+    stream = await _get_client().chat.completions.create(
         model=settings.OPENAI_MODEL,
         messages=[
             {"role": "system", "content": f"{_SYSTEM_PROMPT}\n\n참고 정보:\n{context_text}"},

@@ -20,6 +20,7 @@ app = [
     "python-multipart>=0.0.9",
     "email-validator>=2.2.0",
     "openai>=1.50.0",
+    "cryptography>=43.0.0",
 ]
 ai = [
     "chromadb>=0.5.0",
@@ -46,6 +47,9 @@ select = ["E", "W", "F", "I", "C90", "B", "UP", "N"]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends"]
 
 [tool.ruff.lint.per-file-ignores]
+# 문서 버전 자동화용 일회성 스크립트 — 내용이 긴 한글 텍스트 리터럴이라 줄길이 규칙과 안 맞다.
+"docs/add_versioning_v1.1.py" = ["E501"]
+"docs/version_api_spec_v1.1.py" = ["E501"]
 # 테스트 함수명은 한글 문장형이 팀 컨벤션이다 (CODING_RULES.md §4 — test_새로운_닉네임은_사용가능하다).
 "**/test_*.py" = ["N802"]
 

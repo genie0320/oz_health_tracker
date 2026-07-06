@@ -17,7 +17,9 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     ports:
-      - "${DB_PORT:-3306}:3306"
+      # 호스트 포트는 컨테이너 간 통신(DB_PORT=3306, 내부 네트워크)과 무관하다.
+      # 로컬에 이미 MySQL(3306)이 떠 있는 경우가 많아 호스트 노출 포트만 3307로 분리.
+      - "3307:3306"
     volumes:
       - remedi_mysql_data:/var/lib/mysql
     healthcheck:
